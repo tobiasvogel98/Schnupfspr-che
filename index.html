@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="de-CH">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Schnupf-Sprüch Sammlig</title>
+<style>
+  :root{
+    --bg:#1c140d;
+    --bg2:#2a1d12;
+    --card:#3a281a;
+    --card-hover:#48321f;
+    --accent:#e0a955;
+    --accent2:#c97b2c;
+    --text:#f3e7d6;
+    --muted:#b89c7d;
+    --border:#5a3f28;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background:linear-gradient(160deg,var(--bg),var(--bg2));
+    color:var(--text);
+    min-height:100vh;
+  }
+  header{
+    text-align:center;
+    padding:34px 16px 18px;
+    border-bottom:2px solid var(--border);
+    background:rgba(0,0,0,.2);
+  }
+  header h1{
+    margin:0;
+    font-size:clamp(28px,5vw,46px);
+    letter-spacing:1px;
+    color:var(--accent);
+    text-shadow:0 2px 0 #000;
+  }
+  .title-icon{
+    height:0.8em;
+    width:auto;
+    vertical-align:-0.1em;
+    margin:0 10px;
+  }
+  header p{
+    margin:8px 0 0;
+    color:var(--muted);
+    font-size:15px;
+  }
+  .toolbar{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:rgba(28,20,13,.96);
+    backdrop-filter:blur(4px);
+    border-bottom:1px solid var(--border);
+    padding:14px 16px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    align-items:center;
+    justify-content:center;
+  }
+  .search-wrap{
+    position:relative;
+    flex:1 1 420px;
+    max-width:620px;
+  }
+  #search{
+    width:100%;
+    padding:13px 44px 13px 16px;
+    font-size:16px;
+    border-radius:30px;
+    border:2px solid var(--border);
+    background:var(--card);
+    color:var(--text);
+    outline:none;
+    transition:border-color .15s;
+  }
+  #search:focus{border-color:var(--accent);}
+  #search::placeholder{color:var(--muted);}
+  .search-wrap .icon{
+    position:absolute;
+    right:16px;top:50%;
+    transform:translateY(-50%);
+    color:var(--muted);
+    pointer-events:none;
+    font-size:18px;
+  }
+  #clear{
+    position:absolute;
+    right:14px;top:50%;
+    transform:translateY(-50%);
+    background:none;border:none;
+    color:var(--muted);
+    font-size:20px;cursor:pointer;
+    display:none;
+    line-height:1;
+  }
+  .count{
+    color:var(--muted);
+    font-size:14px;
+    white-space:nowrap;
+  }
+  .count b{color:var(--accent);}
+  main{
+    max-width:1200px;
+    margin:0 auto;
+    padding:22px 16px 40px;
+  }
+  .grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+    gap:18px;
+  }
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px 20px;
+    box-shadow:0 4px 10px rgba(0,0,0,.25);
+    transition:transform .12s,background .12s,box-shadow .12s;
+    display:flex;
+    flex-direction:column;
+  }
+  .card:hover{
+    transform:translateY(-3px);
+    background:var(--card-hover);
+    box-shadow:0 8px 18px rgba(0,0,0,.35);
+  }
+  .card h2{
+    margin:0 0 10px;
+    font-size:19px;
+    color:var(--accent);
+    border-bottom:1px solid var(--border);
+    padding-bottom:8px;
+  }
+  .card .verse{
+    white-space:pre-line;
+    line-height:1.5;
+    font-size:15px;
+    color:var(--text);
+  }
+  mark{
+    background:var(--accent);
+    color:#1c140d;
+    border-radius:3px;
+    padding:0 2px;
+  }
+  .empty{
+    text-align:center;
+    color:var(--muted);
+    padding:60px 16px;
+    font-size:18px;
+  }
+  .pager{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+    margin-top:30px;
+  }
+  .pager button{
+    background:var(--card);
+    border:1px solid var(--border);
+    color:var(--text);
+    padding:9px 14px;
+    border-radius:8px;
+    cursor:pointer;
+    font-size:15px;
+    min-width:42px;
+    transition:background .12s,border-color .12s;
+  }
+  .pager button:hover:not(:disabled){border-color:var(--accent);}
+  .pager button.active{
+    background:var(--accent);
+    color:#1c140d;
+    border-color:var(--accent);
+    font-weight:700;
+  }
+  .pager button:disabled{opacity:.35;cursor:not-allowed;}
+  .pager .dots{color:var(--muted);padding:0 4px;}
+  footer{
+    text-align:center;
+    color:var(--muted);
+    font-size:13px;
+    padding:20px;
+    border-top:1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1><svg class="title-icon" viewBox="0 0 64 44" aria-hidden="true"><defs><linearGradient id="sg1" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5f28"/><stop offset="1" stop-color="#432c13"/></linearGradient><clipPath id="sc1"><path d="M4 38 C9 21 18 11 32 9 C46 11 55 21 60 38 Z"/></clipPath></defs><ellipse cx="32" cy="39.5" rx="30" ry="4" fill="#000" opacity="0.22"/><path d="M4 38 C9 21 18 11 32 9 C46 11 55 21 60 38 Z" fill="url(#sg1)"/><g clip-path="url(#sc1)" fill="none" stroke-linecap="round"><g stroke="#5c3b1b" stroke-width="1.5" opacity="0.85"><path d="M9 37 q4 -6 8 -4"/><path d="M19 34 q3 -7 8 -5"/><path d="M30 31 q2 -9 7 -6"/><path d="M40 33 q4 -8 9 -4"/><path d="M48 37 q3 -6 7 -3"/></g><g stroke="#9c6529" stroke-width="1.1" opacity="0.9"><path d="M13 36 q3 -5 7 -4"/><path d="M24 32 q2 -6 7 -5"/><path d="M34 29 q3 -7 8 -4"/><path d="M44 34 q3 -6 8 -3"/></g><g stroke="#e0a955" stroke-width="0.8" opacity="0.85"><path d="M17 34 q3 -4 6 -3"/><path d="M28 29 q2 -6 6 -4"/><path d="M38 31 q3 -6 7 -3"/></g></g></svg>Schnupf-Sprüch Sammlig<svg class="title-icon" viewBox="0 0 64 44" aria-hidden="true"><defs><linearGradient id="sg2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#9a5f28"/><stop offset="1" stop-color="#432c13"/></linearGradient><clipPath id="sc2"><path d="M4 38 C9 21 18 11 32 9 C46 11 55 21 60 38 Z"/></clipPath></defs><ellipse cx="32" cy="39.5" rx="30" ry="4" fill="#000" opacity="0.22"/><path d="M4 38 C9 21 18 11 32 9 C46 11 55 21 60 38 Z" fill="url(#sg2)"/><g clip-path="url(#sc2)" fill="none" stroke-linecap="round"><g stroke="#5c3b1b" stroke-width="1.5" opacity="0.85"><path d="M9 37 q4 -6 8 -4"/><path d="M19 34 q3 -7 8 -5"/><path d="M30 31 q2 -9 7 -6"/><path d="M40 33 q4 -8 9 -4"/><path d="M48 37 q3 -6 7 -3"/></g><g stroke="#9c6529" stroke-width="1.1" opacity="0.9"><path d="M13 36 q3 -5 7 -4"/><path d="M24 32 q2 -6 7 -5"/><path d="M34 29 q3 -7 8 -4"/><path d="M44 34 q3 -6 8 -3"/></g><g stroke="#e0a955" stroke-width="0.8" opacity="0.85"><path d="M17 34 q3 -4 6 -3"/><path d="M28 29 q2 -6 6 -4"/><path d="M38 31 q3 -6 7 -3"/></g></g></svg></h1>
+  <p>Söttisch schaffä aber hesch kei Pfupf – de nimmsch am bestä ä Apricot Schnupf.</p>
+</header>
+
+<div class="toolbar">
+  <div class="search-wrap">
+    <input id="search" type="text" placeholder="Spruch suechä … (Titel oder Text)" autocomplete="off">
+    <span class="icon">🔍</span>
+    <button id="clear" title="Löschen">✕</button>
+  </div>
+  <div class="count" id="count"></div>
+</div>
+
+<main>
+  <div class="grid" id="grid"></div>
+  <div class="pager" id="pager"></div>
+</main>
+
+<footer>Liebe Gott wir danken Dir für Schnupftabak und Dosenbier!</footer>
+
+<script>
+const PER_PAGE = 12;
+
+const sprueche = [
+  {t:`Leider Kleider`, v:`Benediktum, Benedaktum,
+in Afrika laufen die Frauen nackt rum.
+Bei uns tragen sie Kleider,
+leider.`},
+  {t:`Benediktum`, v:`Benediktum, Benedaktum,
+im Paradies lief alles nackt rum.
+Der liebe Gott hat die Berge begipfelt,
+die Frauen gespalten, die Männer bezipfelt.
+Dieser Zipfel ist der Frauen Trost, drum Priis!`},
+  {t:`Tell`, v:`Tell sprach zu den Eidgenossen:
+Wer nicht schnupft, der wird erschossen!
+Da kam der Gessler herbei und sagte:
+Hört doch auf mit dieser Schnupferei!
+Kaum waren diese Worte erklungen,
+war er tot vom Pfeil durchdrungen.
+So soll es jedem ergehen,
+die sich gegen Schnupfer wehren!`},
+  {t:`Vier Jahreszeiten`, v:`Im Winter ist es halt schon so gehalten
+das durch die Kälte die Haut wird gespalten.
+Im Frühling aber wieder mehr Wärme man verspührt
+und von alleine die Libido glüht.
+Der Sommer hat es ganz Dick
+sind die Miniröcke ganz schick.
+Ja der Herbst ist doch die beste Zeit
+die geschwängerte doch zur Hochtzeit schreit.
+Also liebe Schnupfgemeinschaft sei hier kurz gesagt,
+vögeln nicht schnupfen, gibt eine Vaterschafts Klag!`},
+  {t:`Meister Proper`, v:`Meister Proper putzt das Klo
+steckt den Finger in den Po
+steckt den Finger in den Mund
+Schokolade ist gesund`},
+  {t:`Bauer und Sau`, v:`Isst der Bauer abends Schinken,
+tut die Sau am Morgen hinken!`},
+  {t:`Flachdach`, v:`Beim Flachdach
+ist das Dach flach.`},
+  {t:`Dampfschiff`, v:`Auf jedem Schiff das dampft und segelt,
+gibt's einer der die Putzfrau vögelt!
+Und ist das Schiff auch noch so klein,
+einer muss die Putzfrau sein!`},
+  {t:`Vättis`, v:`Z'Vättis am Taminabruna
+tuan i mina Zipfel suna.
+Het dr Siach a Sunnabrand,
+chlepf na übara Brunarand`},
+  {t:`Schaffä`, v:`Söttisch schaffä aber hesch kei Pfupf,
+de nimmsch am bestä ä Apricot Schnupf.`},
+  {t:`Besser cha's eim gar nid gah`, v:`Schnüpfli nä und Schnüpfli ha,
+besser cha's eim gar nid gah,
+und dr zuä guät Priisä,
+das äs s Läbä nid duät vermiisä.`},
+  {t:`Fit`, v:`Miär sind fit miär sind zwäg,
+so schnupfed miär uf jedem Wäg.`},
+  {t:`Slow down`, v:`Slow down
+take it easy!
+Nim äs Priisi.`},
+  {t:`Sucht`, v:`Schnupfe isch keh Droge
+darum chaufemer grad e Dose.`},
+  {t:`Weihnachtsspruch`, v:`Den Weisen aus dem Morgenland
+war der Schnupf nicht unbekannt.
+Der vierte Weise sag ich dir
+schupfte wie ein Rüsseltier.
+So nahm er einen grossen Sack
+und füllte ihn mit Schnupftabak.
+Den schenkte er dem Gottessohne
+und hoffte das ihm's wohl bekomme.
+Dieser strahlte über beide Backen
+und schenkte ihm sein erstes Lachen.
+Drum wollen wir nun kräftig schnupfen
+und zwei grosse Häuflein lupfen!`},
+  {t:`Jesus sprach`, v:`Jesus sprach zu Gott, Du bist alt
+da wurde es entsetzlich kalt.
+7 Jahre dunkelgrau
+keine einzige schöne Frau.
+Nur wir Schweizer habns begfriffen
+haben auf alles drauf geschissen.
+Bei uns wurde es ganz schön warm
+es verbreitete sich sehr viel Charme.
+Wir haben nämlich Eier im Sack
+das isch d'Wörkig vom Schnupftabak!`},
+  {t:`Lehrer und Schüler`, v:`Ist das Wetter nicht so schön,
+hat der Streber trotzdem Föhn.
+Denn er steckt mit seinem Grind,
+tief im Arsch der Lehrerin.`},
+  {t:`Mofa`, v:`Mofa fahrä da isch s'Bescht,
+und dä Schnupf git üs dä Rescht.`},
+  {t:`Kamel`, v:`Sprach der Elefant zum Kamel,
+warum hast du 2 Tittä über der Seel?
+Sprach das Kamel zum Bösewicht,
+sagt der mit dem Schwanz im Gesicht.`},
+  {t:`Schnupf du holder Saft...`, v:`Schnupf du holder Saft,
+gib uns Power gib uns Kraft.
+Wir schnupfen dich du haust uns nieder,
+wir stehen auf und schnupfen wieder.`},
+  {t:`Bier`, v:`Als ich dich zum ersten Mal sah,
+als ich dich zum ersten Mal fühlte.
+Als sich unsere Lippen zusammenführten,
+als ich deinen Saft ihn mir spürte.
+Ach wie sehne ich mich nach dir...
+Du geliebte Flasche Bier!`},
+  {t:`Liebe Gott`, v:`Liebe Gott wir danken Dir
+für Schnupftabak und Dosenbier!`},
+  {t:`Vibrator`, v:`Der Vibrator ist ein Apparat,
+der der Frau den Mann erspart...
+Stellt man ihn auf Stufe vier,
+fickt er los wie ein Stier.
+Stellt man ihn auf Stufe zwanzig,
+wird sogar die Milch in der Brust ranzig!`},
+  {t:`Schöne Frauen`, v:`Was den schönen Frauen gefällt,
+ist ein Mann mit schön viel Geld.
+Ich hab kein Geld ich armer Sack,
+deshalb bleibt mir nur der Schnupftabak!`},
+  {t:`Der Frühling`, v:`Der Frühling naht mit Brausen,
+die Frauen werden Stolz.
+Ich merks an meinem,
+denn der ist hart wie Holz.`},
+  {t:`Schlüsselbund`, v:`Wenn man bedenkt, wie er so hängt,
+so locker und lose, in meiner Hose,
+und wenn man ihn rauszieht, wie er dann aussieht,
+so dick und rund - mein Schlüsselbund.`},
+  {t:`Frühling`, v:`Frühling ist's die Zeit zu träumen,
+die Vögel husten von den Bäumen,
+die Maise kotzt ihr Nestchen voll,
+ein Nest an der Autobahn ist nicht so toll.`},
+  {t:`Zipfelchappe`, v:`Hüt en Rappe,
+morn en Rappe,
+git ä schöni Zipfelchappe!`},
+  {t:`Gebet - mal richtig`, v:`Wir leben nicht vom Bier allein,
+es muss auch dein Schnupf bei uns sein.
+Wir danken dir das du uns liebst,
+und uns dies beides täglich gibst.`},
+  {t:`heisser Tag`, v:`Ein heisser Tag, sie zieht sich aus,
+sie legt sich hin, er holt Ihn raus.
+Spritzt ihr ins Gesicht und auf den Bauch,
+ach herrlich so ein Gartenschlauch!`},
+  {t:`Sack- Schnupftabak`, v:`Lieber numme eis Ei im Sack,
+däfür ä Priise Schnupftabak.`},
+  {t:`Der Winter`, v:`Draussen liegt noch etwas Schnee,
+zuwenig gefroren ist der See,
+dass man könnte Schlittschuh laufen,
+drum muss man Schnupfen und auch saufen.`},
+  {t:`Gerade`, v:`Gerade als er gerade war
+knickte er, was schade war.`},
+  {t:`Priester`, v:`Fällt der Blick ins Glas mal etwas tiefer,
+geh nicht gleich zum nächsten Priester,
+und beicht ihm alle deine Fehler,
+nimm zuerst das Döschen und mach es leerer!`},
+  {t:`Vor dem Essen`, v:`Steht das Essen auf dem Tisch,
+und in deinem Arsche drückt ein Schiss,
+dann scheiss nicht in die nächste Vase,
+sondern zieh den Schnupf dir in die Nase!`},
+  {t:`Einerlei`, v:`Rede nicht zu lang um den heissen Brei,
+ist sowieso alles einerlei.
+Schnupfspruch hin, Schnupfspruch her,
+komm und schnupf noch einen mehr!`},
+  {t:`Elefant`, v:`Ein Elefant poppt sich durch die Welt,
+weil ihm das poppen so gefällt,
+am liebsten poppt er kleine Spatzen,
+weil die beim Höhepunkt so herrlich platzen.`},
+  {t:`Sunnebrand`, v:`Sunne, Meer und Strand
+mir schnupfed jetz uf euse Sunnebrand!`},
+  {t:`Eine Weisheit`, v:`Trinke viel und spiel dazu
+so hat man vor Weibern ruh.
+Holst dann das Döschen auch hervor
+so steigt man mit Freud empor.`},
+  {t:`Ramseier Apfelsaft`, v:`Willst du scheissen ohne Kraft,
+dann trinke Ramseier Apfelsaft. Priiis`},
+  {t:`Alti Eiche`, v:`Hinderem Huus, vorem Huus stoht e alti Eiche!
+D'Muetter hät scho immer gseit,
+det dörf mer anne seiche!`},
+  {t:`Drei Zwerge`, v:`Doben auf dem Berge,
+da standen einst drei Zwerge.
+Der eine rauchte Gras,
+der andere XTC frass.
+Und wie's im Leben halt so geht,
+haben's beide nicht lange überlebt.
+Nur der eine hat's erkannt
+und sich dem Schnupfen zugewandt.
+Er schnupfte jeden Tag, weil er dies so mag.
+Er lebte glücklich und gesund,
+denn dies ist auch des Schnupfes Grund!`},
+  {t:`Neubau`, v:`Wenn dr Sanitär is Röhrli pisst
+und dr Stromer Schiessdräck misst.
+Wenn dr Moler dWand versaut
+und dr Murer aus schiäf baut,
+de gahts am Architekt ganz mies.`},
+  {t:`Zürichsee`, v:`Schwimmt ein Hund im Zürichsee
+hält er sein Schwänzchen in die Höh.
+Wenn ich euch Mädchen in die Augen seh
+geht es mir wie dem Hund im Zürichsee.`},
+  {t:`Bauer`, v:`Klebt der Bauer an der Mauer,
+war der Stier ein bisschen sauer!`},
+  {t:`Teigwaren`, v:`Warum heissen Teigwaren Teigwaren,
+weil sie früher Teig waren.`},
+  {t:`Egal`, v:`Egal ob Sunnä oder Rägä
+mit Schnupftabak wird dr Tag zum sägä.`},
+  {t:`Alkohol ist gesund`, v:`Nach 30 Jahren stirbt ein Pferd,
+das niemals hat ein Bier geleert!
+Mit 20 sterben Schaf und Ziegen,
+die niemals Schnapst zu trinken kriegen.
+Die Kuh trinkt Wasser nie mit Rum,
+nach 15 Jahren fällt sie einfach um.
+Die Katze schleckt nur Milch allein,
+sie geht nach13 Jahren ein.
+Das Huhn legt Eier für Likör,
+6 Jahre lang, dann lebts nicht mehr.
+Der Mensch trinkt Schnaps trotz kranker Galle
+und überlebt die Viecher alle.
+Damit ist der Beweis erstellt,
+dass Alkohol gesund erhält.
+Drum lasst uns öfters einen heben,
+damit wir alle länger leben.`},
+  {t:`Danke Columbus`, v:`Wir danken unserm Columbianer,
+der uns brachte den Schnupf von den Indianer.
+Er brachte ihn uebers Meer,
+doch jetzt lebt er nicht mehr.
+Ihm zu Ehren werden wir weiter schnupfen
+und uns freudig vermehren.`},
+  {t:`Posaune`, v:`Posaune unser die du bist an der Fasnacht,
+Dein Sound komme,
+Deine Power geschehe
+wie auf der Bühne so auch in der Kneipe.
+Unseren täglichen Lutz gib uns heute,
+und vergib uns unsere Aussetzer,
+denn auch wir vergeben unserem Tambi.
+Führe uns in Versuchung und erlöse uns
+von unseren Kritikern...
+Denn Dein ist die Luft, der Klang, die Musik
+und die Power.`},
+  {t:`Sunna`, v:`Wenn Sunna zoberscht am Himmel stoht
+und langsam untergoht.
+Kindli scho im Bettli sind,
+den nemen miar nomol as Schnüpfli
+well das isch z'beschta Bettmümpfli.`},
+  {t:`Hochwasser`, v:`Siehst du im Estrich die Frösche leichen,
+ist dies gewiss ein Hochwasserzeichen.`},
+  {t:`BigMag`, v:`Ob Hond,Chatz oder Muus
+Mc Donalds macht de BigMag druus!`},
+  {t:`Oh Herrjesus Christ`, v:`Oh Herrjesus Christ.
+Im obere Gädeli hets kei Mischt.
+Im undere hets kei Gülla.
+I glaub miar müand go nochafülla.`},
+  {t:`Längwilig`, v:`Isches ruhig im ganzä Land,
+de nim ä mal dr Schnupf zur Hand.
+Mach z Dösli uf ir freie Luft
+und schmöck dä himmlisch, liecht Duft.
+Nim ä Prisä us dr Dose,
+u lane idr Nase chrose.`},
+  {t:`Frühlingsszeit`, v:`Wenn der Alpenfirn sich röted
+und der Geissenpeter Geissen flöted,
+wenn der Opa auf dem Heidi liegt
+und Frau Holle ihre Tage kriegt,
+wenn Hänsel nur nach Schwänzen schreit
+dann ist Frühlingszeit.`},
+  {t:`Lagerfeuer`, v:`Wir sitzen hier am lagerfeuer
+und schnupfen wie die ungeheuer,
+ob schon morgen wird das stört uns nicht,
+denn das feuer gibt uns licht.
+Doch almälich sind die dosen leer,
+das kann nicht sein, dass ist nicht fair.
+beim migros gehen wir noch vorbei,
+da gibt es schnupf und allerlei.
+was nicht gerecht, das ist auch fies,
+scheissegal, wir sagen Priis.`},
+  {t:`So wunderschön`, v:`Du liegst auf meinem Handrücken
+das tut mein Herz Entzücken.
+Dein wunderschöner Duft
+schwebt süsslich durch die Luft.
+Ihr wisst alle was wir meinen
+Deshalb nehmen wir noch einen!`},
+  {t:`verbrannte Kletter-Wädli`, v:`Heute sind wir hoch geklettert,
+haben über die anderen gewettert!
+Habe den Sonnenbrand zu spät erkannt,
+daher hat es mir die Häärchen an der Wade
+abgebrannt!
+Doch dieser Schnupf kann sehr gut lindern
+mit einem Bier zusammen den Schmerz zu verhindern.`},
+  {t:`schlimme Zaichen`, v:`graue Haare
+blaue Augen
+langsame Saichen,
+dass sint schlimme Zaichen.`},
+  {t:`in der nacht`, v:`in der Nacht in der Nacht
+wenn der Busenhalter kracht
+wenn der Schwanz explodiert
+werden kleine Kinder produziert.`},
+  {t:`Nilpferd`, v:`Wenn ein Nilpferd hämisch grinst
+und alles plötzlich nach luft ringt
+entwich dem Nilpferd stinkend Gas
+weil es zuviel Bohnen frass
+Und damit wie keinen Gestank erleiden
+soll Schnupf geschwind in unsere Nase steigen.`},
+  {t:`Die Haustürglocke`, v:`Die Haustürglocke an der Wand
+ein Mädchenbusen in der Hand
+Das sind 2 Dinge sehr verwandt
+denn wenn man beides zart berührt
+man oben ganz schnell deutlich spürt
+das unten einer steht und um Einlass fleht!`},
+  {t:`Weihnachten`, v:`Baum verbrannt,
+Geschenk vergessen,
+die Gans ist auch schon aufgefressen.
+Und auf dem Tisch nur eine kleine Bise,
+na dann eine schöne Priise!`},
+  {t:`Kräht der Güggel`, v:`Kräht der Güggel auf dem Huhn,
+hat das mit Wetter nichts zutun!`},
+  {t:`Bucheli`, v:`Wenn man den Bucheli im Garten findet,
+hat es ihn wohl vom Dach aben gewindet`},
+  {t:`rauchen`, v:`Der kluge Schnupfer weiss,
+das Rauchen ist ein Scheiss!`},
+  {t:`Z'beschta Biar`, v:`Z'beschta Biar
+trinkat miar.
+Im Calandaland
+drum zämaheba üsari Hand.
+Schnupfend uf dia alta Wieber
+voglend dia junga, das isch gschieder.`},
+  {t:`Proscht`, v:`Was früher meine Leber war,
+ist heute eine Minibar.`},
+  {t:`Wiedermol`, v:`Eifach wieder mol eis go schnupfe,
+s'gmüetliche Bier as muul lupfe.
+Uf d'Lüüt rundume de gfüllt Handrugge hebe,
+sich de Moment nid vermiese loh und eifach lebe.
+Ich bin en Schnupfer und keis Frack,
+gah min Wäg mit de Priise im Sack.`},
+  {t:`Servela`, v:`Ob Hund, Katz oder Muis
+miär machid ä Servala druis!`},
+  {t:`For Powermädels only`, v:`Shoppen, schminken, Kaffee trinken
+Schnell dem neuen Lover winken
+Rumficken,Geld verprasseln
+Männern an die Schwänze fassen
+Mädels,das ists wahre Leben
+Darauf lasst uns einen heben.`},
+  {t:`Strassenbauer`, v:`Hast du Power lernst du Maurer,
+hast du Grips und Power
+lernst du Strassenbauer.`},
+  {t:`Magnet unser`, v:`Mein Magnet der du bist im Dösschen,
+geheiligt werde deine Mischung.
+Dein Menthol beweist dein dasein.
+dein Stärke geschehe,
+den du steigst durch die Nase ins Gehirn,
+von Hand wie auch mit Röhrchen.
+führe uns nicht in Versuchung
+eines anderen Tabak,
+sondern erlöse uns von all den Fusel.
+Vergib uns wenn wir Niessen,
+so möge du uns gepriisen.`},
+  {t:`Zue`, v:`Liäber zueständig,
+als ständig zue.`},
+  {t:`Hinter dünnen Schulhausmauern`, v:`Hinter dünnen Schulhausmauern
+schnupfen die Schüler wie die Bauern,
+nur der Rektor in seinem Zimmer
+probiert es mit seinem Finger.
+Er schmollte und er grollte
+weil das weisses Gold nicht in seine Nase wollte.`},
+  {t:`Finger am Sack`, v:`Wenn dir Finger wachsen an deinem Sack,
+so liegt der Grund bei billigem Schnupftabak.
+Drum sollst du dich nicht den Pöschel kaufen,
+mit MC Chrystal's wirds dir besser laufen.`},
+  {t:`Lenk`, v:`Schon Gott sprach im Tippi an der Lenk,
+jede nackte Frau ist doch ein Gschenk!`},
+  {t:`Muhhhh`, v:`Eine Kuh hat vier Beine,
+hat sie mal keine fällt sie um.`},
+  {t:`Weihnachten`, v:`wienacht isch bald,
+es wiänächtelet im wald,
+du gsehsch es härzigs rehli,
+es versuuft gad imene seeli.`},
+  {t:`Hund und Katze`, v:`Der Hund zu der Katze
+machs mir mit der Tatze
+da sagt die Katze zum Hund
+nein lieber mit dem Mund.`},
+  {t:`Ernst`, v:`Liäber nid ernst gno wärdä
+als vom Ernst gno wärdä.`},
+  {t:`Nei ke Schnupftabak meh!`, v:`Wemmer ken Schnupftabak meh händ,
+denn klatschemer ganz eifach it Händ.
+De Gott git euis scho es Dösschen,
+und schnupfen es mit Röhrchen.
+Das tuet ganz guet
+und macht mer Muet.`},
+  {t:`De Päuli`, v:`Es git e chliises Säuli,
+mit Name heisst es Päuli.
+Das suecht so fescht sis Mami,
+doch das isch scho Salami.`},
+  {t:`Romontsch, romontsch`, v:`Romontsch, romontsch tiu vegl lungatg,
+tila si il schnupf da tutta fatg.
+lai tiu tschurvi intec barschar,
+e cala mai da tubaccar!`},
+  {t:`Frauefütz`, v:`rinkel rankel runkel
+frauefütz sind dunkel
+wiä chas au andersch sii
+es schiint jo wohl kei sunnä drii.`},
+  {t:`Die Alpen`, v:`Auf den Alpenhöhen
+da weht der Föhn
+da ist das Schnupfen wunderschön
+Drum schnupf mer jetzt ganz gschind
+weil des Pris sonscht wekbloset wird vom Wind.`},
+  {t:`Hinderem Huus`, v:`HInderem Huus im Schatte,
+da vöglet e Muus e Ratte.
+Und vorem Huus i de Sunne,
+da Wixxt de Buur i Brunne.`},
+  {t:`Sonne im Herzen`, v:`Hab Sonne im Herzen und Zwiebeln im Bauch
+dann kannst du gut furzen und stinken tut's auch.`},
+  {t:`Gruess os em toggeburg`, v:`Hoptsach dä Hond isch rond
+ond Katz isch gsond
+ond dä Chääs isch rässs...!`},
+  {t:`Wasser und Wein`, v:`Wasser macht weise, lustig der Wein.
+Darum trinken wir beides, um beides zu sein!`},
+  {t:`Sekretärin`, v:`Früher war es so geregelt, dass der Chef die
+Sekretärin fögelt-
+Heute ist alles so verzwickt, dass sogar der
+Stift sie fikt!`},
+  {t:`Äntlibuecher`, v:`Mir Äntlibuecher sind die Beschtä,
+im suufä, schnupfä und feschtä!`},
+  {t:`Der Wind`, v:`Chum i säges gschwind,
+suscht nimmt en de Wind.`},
+  {t:`Fis!`, v:`Wer Andern eine Bratwurst brät,
+braucht ein Bratwurstbratgerät.
+Wer Andern eine eine Grube gräbt,
+esch es Ar...!`},
+  {t:`Ä Bur`, v:`Ä Bur oni aebi
+isch wine bueb oni schnäbi`},
+  {t:`Sayser Skiferiengruppe aus Baar`, v:`lieber ufem chalte Bode hocke,
+statt mit chalte Hode bocke!`},
+  {t:`Flaschenbier`, v:`wenn meine finger zärtlich deinen hals berühren
+und wenn meine lippen deine feuchte öffnung
+spühren
+weiss isch du gehörst ganz mir mein geliebtes
+
+           Flaschenbier!`},
+  {t:`Rappi`, v:`Suuffä, schnupfä rund um d Uhr,
+das isch d Laker's Fan-Kultur,
+drum bliibed mir üsem Motto treu,
+fuul, spitz und arbeitsscheu!`},
+  {t:`Moses`, v:`Gott sprach zu Moses ,
+steig ab em Velo und stoss es`},
+  {t:`Isidor der Schuft`, v:`Der König schritt von Wand zu Wand in seinem
+schönen Abendgewand.
+Isolde du bist ja ganz errötet, hat dich einer
+durchgeflötet?
+Ja es war isidor der Schuft, er hat mich einfach
+durchgepufft.
+Mit einem Offenrohr 10 meter lang und 5 Meter
+dick, so hat er mich gefickt.
+Isidor betritt den Saal.
+Isidor du Schuft hast meine Tochter durchgepuft.
+O Herr so lasse Gnade wallten.
+Nein ich will dir deine Eier spallten.
+Ein kleiner Schnitt, ein greller Schrei und auf
+dem Boden rollt ein halbes Ei.
+Und die Moral von der Geschicht, halbe Eier
+rollen nicht.`},
+  {t:`Ehre`, v:`wo saufen eine Ehre ist,
+kann kotzen keine schande sein!`},
+  {t:`Blutbahn`, v:`Haschte schnupf in der Blutbahn
+kanschte ficken, wie ein Truthahn.`},
+  {t:`Sex`, v:`In  der  Nacht  in der  Nacht,
+wenn  der  Busenhalter  kracht.
+Wenn  der  Schwanz  explodiert
+so  werden  kleine  Kinder  produziert.`},
+  {t:`Arbeitstag`, v:`Und wieder ist ein Tag vorrbracht,
+und wieder nichts wie Mist gebracht,
+doch nun schläft wohl ihr sorgen,
+leckt mich am Arsch, bis morgen.
+Und am Morgen mit dem selben Fleiss,
+gehts zurück an den selben Scheiss.`},
+  {t:`usem glarnerland fu de bergä obe`, v:`Alkohol und sonnenschein,
+bumsen und besoffen sein,
+wir bleiben unserem Motto treu,
+geil, pervers und arbeitsscheu!`},
+  {t:`Pris`, v:`Lieber über Nacht versumpfen,
+als im Sumpf übernachten.`},
+  {t:`Schnupf in der Nacht`, v:`Kanst du in der Nacht nicht Schnupfen, so nimm
+eine Frau und versuch sie zu pfupfen.`},
+  {t:`De Schnopf ond d Shisha`, v:`Schnopfe esch voll fein,
+drom mach i mer grad e 20cm line,
+aber zersch no en Wasserpfife,
+denn chan ich guet snife,
+be dene sache gots mer ned miis,
+drom`},
+  {t:`Liebster freund`, v:`Der Schnupf ist unser liebster Freund! Er haut
+uns nieder, wir stehen auf und schnupfen wieder!`},
+  {t:`Schnupfverband Guggisberg`, v:`Jetzt noch klein,
+einmal gross,
+SVG isch üse troscht!`},
+  {t:`Bellender Hund`, v:`Das Laub fällt von den Böimen
+ein Hund bellt nöimen
+dann fängt er auch noch an zu knurren
+gehen wir halt anderswo durren.`},
+  {t:`Es ist verboten`, v:`Es ist verboten toten Kojoten die Hoden zu verknoten,
+denn met chnödli im hödli gots besser`},
+  {t:`schnupfschpruch vo dä ägypte...`, v:`hinter dicken pyramidenmauern
+vögeln die pharaonen wie die bauern
+nur kleopatra in ihrer kammer
+arbeitet selber mit dem hammer
+und sie fluchte und sie grollte
+weil es ihr nicht kommen wollte
+da nahm sie die papyrusrollen
+und schob sie sich zwischen ihre schollen
+darin steht geschrieben du sollst deine götter lieben
+damit meinen wir den schnupftabak
+und nicht das blöde römerpack!`},
+  {t:`Landsgmeind`, v:`Liebi Mitlandlüüt und Schnupfer
+ä rächtä Schnupfer isch ä Pfupfer!
+Er knallt alles was nur chunnt,
+dänn er isch nuch lang nüd ufem Grund!
+Er voglet bis d Eichlä schreit
+und s z Voorhüütli ummäleit!
+Und Futzä muäs rüüchä
+erscht dänn isches einä vu üüsnä!
+Und gsiisch ämal ä Goof mit glicher Nasä,
+so weisch, er isch vu dim Wasä
+Drum schüssemer üserä Saamästrahl nuch lang lang
+zwüsched ä huufä Bei
+und günd nuch lang nüd hei!`},
+  {t:`Kuh und Schwein`, v:`Auf der Alp da steht ne Kuh
+macht ihr Arschloch auf und zu.
+Auf der Alp da steht ein Schwein
+schaut der Kuh ins Arschloch rein.
+Da sagt die Kuh, Du dummes Schwein
+schau mir nicht ins Arschloch rein!
+Da sagt das Schwein, Du dumme Kuh
+mach doch dein Arschloch zu!
+Und die Moral von der Geschicht
+in fremde Löcher schaut man nicht!`},
+  {t:`2 Mädchen`, v:`Es sassen eins zwei Mädchen auf einer Bank,
+und riiiieeben sich den Kitzler blank.
+Da sagt die rechten zu der Linken,
+riiieech mal wie die Finger stinken.`},
+  {t:`Überstorfer`, v:`Über überstorfer chame säge wasme wott,
+o weders nid glubet mier si cheibe flott.
+Wier kene usserdäm kiner schmärze,
+wüu wier trage immer üses Wappe im härze.
+A rota löi uf blau süubrigum hindergrund
+Das isch üsa stouza bund.
+Es git chum as vouch wo so loyau isch wi wier
+wier si haut äbe liidi tier.
+Mier si ufgwachse im schönst u beste
+Nämlich mit sufe u feste.
+wier hi aus wamu brucht u zwar tonewiis.`},
+  {t:`Tripper`, v:`Nur wer die liebe kennt
+weiss wie der Tripper brennt!`},
+  {t:`Üsi rundi`, v:`I üsere Rundi gits nur ei Devise,
+schnupfe,schnupfe bis zum chiise,
+und wer das alles nöd mag schnupfe,
+söll nöd wiiter Wiiber pfupfe!
+Und wenn mer minütlich üses näsli fülled,
+isch das s'Zeiche dass mer d'Devise erfüllet.`},
+  {t:`Baum by Fabu`, v:`links ein baum,
+rechts ein baum,
+und in der mitte,
+mann glaubt es kaum,
+.auch ein baum !`},
+  {t:`Das fötzchen`, v:`das fötzchen hat es gut
+braucht kein mantel und kein hut
+muss nicht häckel und nicht stricken
+legt sich hin und lässt sich ficken`},
+  {t:`Häbräer`, v:`Gott sprach zu den Häbräern,
+Weg mit den Aebi Mähern ,
+kauft lieber ein Rapid,
+mitem chunder topplet so wit.`},
+
+  {t:`Schnupferehre`, v:`Zäh wie Leder, hart wie Stein,
+muss ein wahrer Schnupfer sein.
+Ob in der Gruppe oder allein,
+sei ein Mann und nimm auch 'ne Line`},
+  {t:`Schwyzerörgeli`, v:`äs isch ä Sucht äs isch ä Drang
+äs isch dä Schwyzerörgeliklang.`},
+  {t:`Krinauer Kultur`, v:`Sufä isch gsond,
+kifä m acht chrank,
+i bi än Schnupfer,
+Gott sei Dank!`},
+  {t:`Lenker`, v:`Wir Lenker haben den besten Schnupf
+und dazu am meisten Pfupf.
+Wir können Frauen so verwöhnen
+das diese noch nach 20 Stunden Stönen.`},
+  {t:`D Hilf`, v:`Ist die Frau schon durchgevögelt
+und die Pumpe auch gleich leer.
+Fällt das Bett gleich auseinander,
+ja da hilft ein Priislein sehr.`},
+  {t:`Schweiz`, v:`En Schwiezerpass meussmer ha,
+den ischmer geut drah.
+Wer öppis anders seid
+de deutmer leid,
+den de het kei ahnig,
+fu de Botanik.
+Den i eusem schöne Schwitzerland
+hemer zwar kei Meer und Sand,
+defür Berge und Seehe.
+Das meund di einde erst lehre.
+Mir hend au nah cooli Uhre
+und super geuti Bure.
+Eusi Schoggi isch au ned schlecht,
+mir machet halt alles recht.
+Mir machet kei halbi sache,
+wies alli ander machet.
+Bie eus isch nüd miess.`},
+  {t:`fuck`, v:`fuck is easy fuck is funny
+many people fuck for money
+if you tink fuck is funny
+then fuck your self and
+save your money!`},
+  {t:`Romontschs`, v:`Stai si defenda il romontsch tiu vegl lungatg,
+beiba bier tilla tubac schioc eis in buglia latg,
+mo ussa dai adatg e va per tiu fatg,
+per che tiu snupf vegni lu tratg,
+sinaquei schein nus mo l'autobahn ei fatg,
+ed ussa dai fetg bein adatg,
+perquei che tuts fan in bien patratg.`},
+  {t:`cäsar u hanibal`, v:`antonion sprach zu cäsar
+erhebet öire gläsar
+wir wollen di hände falten
+den hanibal will über di alpen tschalpen
+da schprach cäsar zu hanibal
+du hascht doch einen knall
+mach doch nicht soo einen miescht
+warte bis der tunnel fertig ischt...`},
+  {t:`Schnupfen und besoffen sein`, v:`Des kleinen Mannes Sonnenschein,
+schnupfen und besoffen sein,
+aufgewacht mit dumpfem Schädel
+und im Bett ein fremdes Mädel,
+Geld versoffen unterm Finger Nasendreck,
+ohne Geld und Ohne Sorgen so beginnt ein Guter Morgen.`},
+  {t:`Schitti`, v:`am schäli sis glied isch kli und wiis`},
+  {t:`shiti`, v:`dr shiti isch kei riis druf schiis! drum priis
+
+greez shitis titis`},
+  {t:`Schneepflug`, v:`Gott sprach zu den Korinter,
+Kauft bei Litscher einen Schneepflug für den Winter!`},
+  {t:`Schnupf`, v:`De Schnupf isch min Pfupf,
+es wird gschnupft bis mi Lupft.`},
+  {t:`Björn und Martin`, v:`Beim Saufen die besten, ihre Körper begehrt,
+Bereit zum festen, von Weibern verehrt.
+Politisch gebildet, ein Schwanz wie ein Bein,
+das können nur Martin und Björn sein.`},
+
+  {t:`bruni nase von`, v:`bruni nase, rote gring
+schnupfe isch nüt für chlini ching`},
+  {t:`ri ra rubel`, v:`ri ra rubel
+wer nid schnupft
+isch an tubbel`},
+  {t:`Girlpower`, v:`If you have the motivation
+to multiply the population,
+take aboy behind the door,
+put him softly on the floor,
+take away the dekoration
+and begin the fabrication...`},
+  {t:`Gott`, v:`Lieber Gott wir danken dir,
+für schnupftabak und Dosenbier!`},
+  {t:`In der Bibel`, v:`In der Bibel steht geschrieben
+man soll seine feinde Lieben
+und da meinen wir den Schnupftaback
+und nicht das Gottverdammte Zigaretenpack.`},
+  {t:`Uttwil`, v:`Do in Utwil isch es cool
+und wer nöd schnupft isch schwul!`},
+  {t:`Schturz`, v:`Hans flog durch di lüfte
+landete auf seiner Hüfte...
+spickte in den himmel
+und landete zum glück nicht auf dem Pimmel`},
+  {t:`Geburt`, v:`Einst als wir noch nicht Lebten,
+hat der Jesus den Gott Gebeten,
+Ich kann nicht Schnaufen, ich muss Sterben.
+Dann begann Gott zu reden,
+und lies die Erde Erbeben,
+Der Schnupf war Geboren, gerade eben!`},
+  {t:`Rock n'Roll`, v:`I love Rock n'Roll
+Schnupftabak, Wyber ond Alkohol`},
+  {t:`Dose lehr, neue Heer!`, v:`vom döschen hoch da komm ich her
+und ich sage euch ''der schnupf ist bald leer''.
+so gehet ins lädchen und kauft euch n'neuen
+das wird euch dann sehr freuen...
+
+... den ohne schnupf ist das leben nichts wert
+drum holt euch doch was ihr begehrt Prrriiiiisss`},
+  {t:`Schwääääään`, v:`Abends wars,
+das Licht schien bleich
+ich drehte Runden um den Teich.
+Da flog ich hin o jeminee
+Hab die Schwanenscheisse nicht gesehn
+mitten auf den Weg geschissen
+hat sie mich aus der Bahn gerissen.
+
+Schwääään si miiies drum Priiiiis`},
+  {t:`Schwitze`, v:`Lieber i de schwitz am seklä
+als am Sekel schwitzä.`},
+  {t:`Secteur du Prendre`, v:`Links ein Baum,
+Rechts ein Baum,
+in der Mitte,man glaubt es kaum
+auch ein Baum`},
+  {t:`!Blüemlisalp!`, v:`Wemä uf dr Blüemlisalp obä hocket,
+u drzuä mitärä geilä Büürin bocket,
+dürds Haar wet dr warm Föhn,
+ds Läbä isch doch gopferteli schön,
+u nach däm geilä Akt, äs chönti ja ned anders si
+muäs ä Schnupftabak zoberscht itz Näsli drii!`},
+  {t:`salomon`, v:`Salomon der Weise spricht,
+Junge Frauen fickt man nicht,
+man lässt sie spriessen und gedeihen
+bis sie nach den Schwänzen schreien!`},
+  {t:`Schnupfspruch`, v:`Ribbel, rabbel, rubbel,
+wer ned schnopft esch en Tobel`},
+  {t:`Gebet`, v:`O Herr im Himmel lass mich beten,
+Ich möcht so gerne Titten kneten.
+Ich möcht sie kneten und besamen.
+O Herr im Himmel ich dank dir. Amen!`},
+  {t:`Uf em Stoos ob Schwyz`, v:`Uf em Stoos ob Schwyz
+isch es Paradies.
+Im Summer gits det Edelwyss
+und im Winter Schnee und Priis!`},
+  {t:`Wer andern eine …`, v:`Wer andern eine Bratwurst brät,
+der hat ein Bratwurstbratgerät.
+Wer dem so will,
+sagt dem auch ... Grill.`},
+  {t:`Wer andern eine …`, v:`Wer andern eine Grube gräbt,
+der hat ein Grubengrabgerät.
+Wer dem so will,
+sagt dem auch ... Menzi Muck.`},
+  {t:`d Ariane`, v:`Mir kännid d Ariane
+Sie isch süess wie Sahne
+Sie isch chlii süess und putzig
+Drum wirds jetzt schnupfig`},
+  {t:`Dä Hond`, v:`Hoptsach dä Hond isch Gsond!`},
+  {t:`A alli schriner`, v:`es maust die maus es bärt der bär
+es lebe der geschlechtsverkehr
+wer täglich 3mal onaniert
+und eine jungfrau demoliert
+wer später noch nach porno schreit
+dem sei dieser priis geweiht!`},
+  {t:`Für dFraue`, v:`schnii, schna, schnopf
+dManne hend kei pfupf,
+wie chönts au andersch sii
+sii händ üs au ned emmer debi!`},
+  {t:`Raufen saufen`, v:`Raufen, saufen, randalieren
+Scheisse an die Wände schmieren,
+Nutten ficken, Geld verprassen,
+Mädchen an die Möse fassen,
+Jungs das ist das wahre Leben,
+darauf wollen wir zwei Häufchen heben.`},
+  {t:`de Z wird Meister`, v:`de Z Meischter, de rescht het ke Pfupf,
+uf das nememer grad en Schnupf`},
+  {t:`Jesulein`, v:`Gott sprach zu Jesulein
+Na ist der Weirauch fein?
+Da sagt Jesu klein Nein!
+ER fährt nicht richtig ein`},
+  {t:`offizieller schnupf spruch vom scozwb`, v:`Mier sind vom scozwb und gönd etz in steigarte
+denn möm mer no uf de basti warte
+denn nimmt ers dösli füre
+jede chunt es hüfli über
+leider ischs züg nöd wiis
+scheiss drauf mier seged etz priiis!`},
+  {t:`Ozsg`, v:`Nirä, Herz und Lungä,
+Arschloch,Futz und Zungä
+Lägg mer doch am Sagg!
+Ez nämmer no en Schnupftabak!`},
+  {t:`Menzingen`, v:`3 Grüne Tannen auf weissem Grund
+Der Name zergeht einem schon im Mund
+Als Partydorf Menzingen ist es bekannt
+nach unserm Vorfahren Meinzo benannt
+Sagen wollen wir mit diesem Spruch
+Unser Heimatdorf ist eine Wucht`},
+  {t:`Schwein`, v:`Nur ein Schwein Schnupft allein
+wir wollen keine Schweine sein
+und deshalb ziehn wir uns diese Scheisse rein!`},
+  {t:`Teddibär`, v:`Es war einmal, und ist nicht mehr
+Ein Füttliplutter Teddibär.
+Er frass die Milch und trank das Brot
+und als er starb
+da war er tod!`},
+  {t:`Bremer schnupfen auch`, v:`Die Möse ist Kein Radio,
+sie spielt auch keine Lieder,
+sie ist nur ein Erholungsort,
+für steif gewordene Glieder!`},
+  {t:`Mis Sprüchli`, v:`Niärä, Härz und Lunge
+Arschloch, Futz und Zungä
+Lägg mer doch am sack,
+Ez nämmer no en Schnupftabak!`},
+  {t:`Trompeter`, v:`Trompeter sind die beschta,
+im sufa schnupfa und feschta.`},
+  {t:`guetnachtschnupf`, v:`liegst du abends müd im bett,
+da mach ich mit dir jede wett.
+ein schnupftabak das tät jetzt gut,
+dazu braucht es nicht viel mut.
+jetzt pack das dösschen aus,
+und nimm ne ladung schnupf daraus.
+jetzt ziehst du dran mit deiner naas,
+auch wenn es riicht wi ä chli graas,
+nur ue dämit du wirsches gseh,
+schnupfe tuet guet und na vil meh.`},
+  {t:`appenzell im lichähus`, v:`zappenzell im lichähuus flüget fütz zum fenster
+us, schwänz gad hinädri well toti fütz au
+gföglet mönd sie priissss!`},
+  {t:`wieber futz`, v:`ri ra runkel im wieberfutz isches dunkel wie
+chas au anderst sie schient jo ger kei sunnä
+dri! priiiissssss!`},
+  {t:`bauern`, v:`Ein Bauer der nicht schnupft
+ist wie ein Traktor der nicht rupft`},
+  {t:`Pontonier`, v:`Ruedrä, Stachle, Suufe,
+mir Pontonier sie ä geile huufe!`},
+
+  {t:`Ds speziellä Thema`, v:`Bei einem Schnupfspruch geht es immer um dass
+gleiche. Nicht um schwarze nicht um weisse.
+es geht um ein spezielles Thema. Dazu gibts
+sogar
+ein schema.
+Man nehme ein Bett und einen Mann,
+und eine Frau die es ganz gut kann.
+Wie es weiter geht muss ich nicht sagen,
+doch verhütung muss sein kein Frage.
+Denn was sonst raus kommt ohne Kondom,
+dass weiss jeder entweder ne Tochter oder ein
+Sohn.`},
+  {t:`Schreiner`, v:`Bist du kein Mann,
+lernst du zimmermann.
+bist du einer,
+lernst du Schreiner!
+Holzwurm`},
+  {t:`verdreht`, v:`Als das Teleklingel fonte,
+treppte ich die rannte runter
+und türte gegen die bums.
+das esch fies.`},
+  {t:`Kiffen`, v:`Kiffen tut nur Lumpenpack,
+da nemen wir lieber schnupftabak.`},
+  {t:`Sixpack`, v:`wieso es Sixpack wenn mä es fass cha ha!`},
+  {t:`Menzi Muck`, v:`Wer andern eine Grube gräbt,
+der hat ein Menzi Muck. Priis`},
+  {t:`Saas-Almagell`, v:`Bisch im Seeland do fahrt di eine übere Huufe,
+so wärsch doch gschider eis uf Almagell go suufe!
+Hesch mou eine ar Bire so gang doch obe düre,
+süsch hesch der Scheiche broche mits düre! Ou e
+blaue Mose hets gä u do druf müessemer no eine`},
+  {t:`Schnupf Unser`, v:`Geheiligt werde deine glassplitter,
+Dein Flash komme,
+Dein Genuss geschehe,
+wie im Pub so auch Zuhause.
+Unser täglichen Tabak gib uns heute.
+Und vergib uns unseren Schleimhäuten,
+wie auch wir vergeben den Säuffern.
+Und führe uns nicht zu den Kiffern,
+sondern erlöse uns von dem Gras.
+Denn dein ist das McChrystals und das Magnet
+und das Nikotin in der Dose.`},
+  {t:`March`, v:`Ob Nordä, Südä, Ostä oder Westä mir märchler
+sind die bestä wers nöd glaubt de sölls go testä`},
+  {t:`schupfee oooolllleee !`, v:`schnupfee isch geill !
+ich seg dir eis du chlinä, schnupfee isch nüt
+für chlini chind !`},
+  {t:`Stoff`, v:`früer als der stoff noch teuer war,
+waren untehosen noch aus futzehar,
+jeder der unterhosen als futzehar hatte,
+dem stand der pimmel das ganze jahr`},
+  {t:`Manuels Schnupfspruch 2`, v:`Wenn mal ist mein Schnupf verschwunden,
+dann traure ich ganz viele Stunden !
+Dann ist mein Leben nichts mehr Wert
+denn jeder meiner Schnüpfe wird verehrt !`},
+  {t:`Manuels schnupfspruch`, v:`Schnupfen tu ich fürs Leben gern,
+die die schnupfen mag ich gern !
+Wenn jemand nicht mit mir schnupfen tut,
+ja dan frag ich mich gehts dem noch gut !`},
+  {t:`schnupf`, v:`dr schnupf loht üs träuma vo sacha,
+wo mier ohni dä stoff ni würren macha!
+loht üs über sacha keia,
+loht's brun us üsera nasa schneia.
+für dia gailst sach uf dera welt, dr schnupf,
+gämmer eza an rechta rupf!`},
+  {t:`Liäber`, v:`liaber im heu obä stossä als
+im stoos obä go heuä
+
+liaber äs tenisposter
+als de penis im toster
+
+liaber am seckel umäschwitzä
+als um d schwiz umä secklä`},
+  {t:`Suurä Moscht`, v:`Häts kä seckel me häts kä wii
+ischs mitäm suufä schnäll verbi.
+Es isch no nöd verbii.
+s hätt no Moscht also proscht!`},
+  {t:`Aufklärer/Panzerjäger`, v:`mir schiässä gärn d tou und öppä ä frou,
+mir fätzä übär d pischtä,
+und hassä d palischtä,
+mir liäbä sex mal sex und biär uf ex,
+panzerjäger isch z paradis, drom pris`},
+  {t:`schnupfer codex`, v:`hand zur nase atme ein
+ja das braune muss da rein
+zieh es langsam zieh es fort
+und du siehst einen besseren ort`},
+  {t:`hc donalds`, v:`wer schwänze lutscht mösen lekt
+der weis wiäs bim mc donalts schmekt.`},
+  {t:`Willerzäller`, v:`Mir Willerzäller sind diä beschtä
+wers nöd glaubt der chas go deschtä`},
+  {t:`hirat neeeeee!`, v:`hiratä isch dr grescht fäler wo ä ma cha machä!
+nim gschidär ä schnupf de chasch no lang lachä`},
+  {t:`Gott sprach zu Lukas`, v:`Gott sprach zu Lukas,
+fahr nöd z'gäch met em Druckfass,
+wenns dir tuet überrolle
+muesch es neus go hole!`},
+  {t:`?`, v:`z läbe isch hert
+aber mina isch herter`},
+  {t:`Vögle`, v:`Wenn mögli
+vögli`},
+  {t:`Appezöll`, v:`z'Appezöll onde dä Rothuusböge
+dönd d'Fraue dä Mannä d'Schwenz abwegä,
+het en mönde as e Pfond,
+haued's en abond gend en em Hond.
+d'Hoptsach dä Hond isch gsond!`},
+  {t:`Dr Bescht`, v:`Dui muäsch dr Bescht vo dr Beschtä sii
+vo dänä wo dr Bescht vo dr Beschtä
+zu dr Beschtä vo dr Beschtä cha gaa!`},
+  {t:`Wifelder`, v:`die jungfernhaut
+ist die haut
+die abhaut
+wenn die vorhaut
+zuhaut
+da kann es vorkommen
+dass die nachkommen
+zu früh kommen
+und wir wir mit dem einkommen
+nicht mehr auskommen`},
+  {t:`Üsi Rundi`, v:`I üsere Rundi gits nur ei devise
+Schnupfe isch nöd länger Fraue Pupfe
+und wer das alles nöd mag schnupfe
+Und wenn mir minütliche üsi Nase fülled
+isch das Zeiche das mer Devise erfüllet`},
+  {t:`Café`, v:`Morgens wollte sie ihn spüren,
+mit den Lippen zart berühren,
+zum blasen an den Mund hin führen,
+heiss floss dan in sie hinein,
+ja so ein kaffee der ist fein.`},
+  {t:`Der Schnupf zu mild`, v:`Wenn beim fickem der Atem keucht
+und bei schnupfen der Saft aus der Fotze läuft
+und der Pimmel spritzt wie wild
+bis der Sperma aus dem Arschloch quillt,
+dann war der Schnupf sicher zu mild`},
+  {t:`D'Magd`, v:`D'Magd hät d'Fischli putzt,
+hinter de grosse Eiche,
+da isch ihre eis in s'Fützli grutscht,
+jetzt chan sie nüme seiche.`},
+  {t:`SVP`, v:`SVP - suufe, vögle, priis!
+SP - für die wos nöd chönd!`},
+  {t:`Schneewitchen`, v:`Schneewitchen hat en geilen Pooo
+runde Titen sowiso
+jeden Abend hat sie wilden Sex
+mit den Zwergen 1-6
+nur der 7 schwule Zwerg
+fickt Gretel hinterm Berg. Priiiis`},
+  {t:`Gersauerspruch`, v:`Gersau und Röschti isch s gröschti
+d Röschti chasch la si
+hauptsach Gersauer muesch si`},
+
+  {t:`Appenzeller`, v:`Auf weissem Grund ein schwarzer Bär,
+die Appenzeller sind Legendär...`},
+  {t:`Mir Fraue`, v:`Mir Fraue das isch klar,
+mir si eifach wunderbar,
+doch es isch zum drvo seckle,
+das mir nit chöi si ohni die brätsch hohle
+Schofseckle.`},
+  {t:`Nun bilden wir einen Kreis...`, v:`Nun bilden wir einen Kreis,
+das wollen wir um jeden Preis.
+Denn wir sind heute zusammengetroffen,
+und wollen auf einen guten Schnupf-Flah hoffen.
+Wir halten unsere Finger zusammen,
+und wollen jeden anderen Gedanken verbannen.
+Denn wir sind heute vergoh
+und halten in der rechten Hand ein Bier.
+Gepriesen seist du unser Schnupf,
+denn alles andere ist ja Pfupf!`},
+  {t:`frosch`, v:`ist ein frosch am leichen,
+darfst du nich hininen seichen`},
+  {t:`Grabsteii`, v:`eimool muess jo jede goo...
+Priis sell ofem Grabsteii stooh...`},
+  {t:`schnupftabak`, v:`nierä härz u lungä,
+schissdräck futzä znugä,
+läck mr doch äm sack,
+jetz nämer schnupftabak!`},
+  {t:`haribofotzen`, v:`Wer Frauen liebt und Fotzen leckt,
+der mag auch Haribokonfekt...
+ich liebe Frauen und lecke Fotzen.
+doch Haribo find ich zum kotzen!`},
+  {t:`Licht aus!`, v:`nippel gros wie unterteller,
+das arschloch tief wie omas keller,
+die fotze stinkt wie sauerkraut,
+egal...lösch das licht und fick die braut`},
+  {t:`Schnupf gebot`, v:`Leer den Schnupf nicht auf den Boden,
+sonst wir dich Gott nicht loben!`},
+  {t:`üri,schwyz und unterwalda`, v:`üri, schwyz und unterwalda
+beckeried und riemästaldä
+miar ständ do wia wättertannä
+söll einä cho und rüpfä drannä
+däm wird srüpfä scho vergoh
+wär zläbä lang nu schnupf und geili wiiber pfupft
+däm gots niä, mies drum priiiiiiiiis`},
+  {t:`aber hüt nacht`, v:`Heute Nacht geliebtes Weib,
+besteig ich deinen Unterleib
+Und das nicht um Gottes Willen,
+sondern um deine Löcher zu füllen
+Darum recke dich und strecke dich,
+und lege deine Beine über mich
+Und empfange meinen Samen,
+in Gottes Namen, Amen!
+das esch rechtigi bürer ond schlierbacher kultur!`},
+  {t:`Füzi`, v:`Hockt es meitschi uf em tütschi
+und ribt sich am füzi,
+und denkt in aller muat
+wia guat dr Christian bürsta tuat, priiiiiss.`},
+  {t:`geschwind`, v:`nims geschwind,
+sonst nimts der Wind,
+ig gloubäs chum,
+mir si imnä rum.`},
+  {t:`Fribourger Coop`, v:`Im coop gits milch zum halbe Pris
+drum machet drus kis grosses gschiss!`},
+  {t:`Gott sprach...`, v:`gott sprach es werde licht
+aber jesus fand den schalter nicht`},
+  {t:`das reh`, v:`das reh springt hoch das reh springt weit
+lass es doch es hat ja zeit`},
+  {t:`huere sexy schpruch!`, v:`schnupfe ohni schprüchli
+ischs gliche wie schissi ohni grüchli!`},
+  {t:`Eiger Grindelwald`, v:`Eiger Mönch und all die grossen
+wollten einst die Jungfrau stossen
+da sprach der Mönch ''Ich würd mich fügen, mir
+würd auch das Finsterarschloch gnügen''.`},
+  {t:`Aufkläer`, v:`Aufkläer, wo immer ihr seid,
+Bleibt Kameraden für alle Zeit!
+Ach, waren wir froh Kameraden zu haben,
+Auf den Märschen, im BeoPo und auf dem Wagen.
+Seid stolz und tragt eure Säbel in Ehren,
+denn einen Aufklärer muss man verehren.
+Und wenn du einst im Sterben liegst,
+Denk immer daran, dass du ein Aufklärer bist.`},
+  {t:`GO Fäänä`, v:`Bin zwar scho voll däne
+gang aber trotzdem an Match go fänä.
+Zug spilt wider mal voll miis
+aber trotz allem nume eis Priis`},
+  {t:`schnupfe mues sii`, v:`letscht hät eine hert krampft,
+bini zunem heregstampft.
+kabutt und erschöpft isch er gsii,
+drum bini zunem hii.
+no us de Ferni hani brüllt,
+hät er sich zu mir umtrüllt.
+hey, nachher chasch besser lupfe,
+chum, mir wänd z'ersch eis schnupfe!`},
+  {t:`Blondienen witz`, v:`was macht mer, wenn en blondinä en ring zu e
+wirft?
+
+abhauä, sie hät granatä nu i dä hand...`},
+  {t:`BiEnE MaYa`, v:`Biene Maya hatte grosse Titten,
+Doch der Willy blieb cool.
+Biene Maya wollte ihn ficken,
+Doch der Willy der war schwul.
+Drum wurde Maya eine Lesbe
+Und vogelte ganz schnell 'ne Wespe`},
+  {t:`Öffnungs-/Schnupfprozedere`, v:`Düredrücke...
+Luege...
+Fasse...
+Zie!`},
+  {t:`Priis`, v:`Willst du eine Frau betglücken
+so musst du sie von vorne pflücken...`},
+  {t:`Marder`, v:`nachts, wenn die marder hühner rupfen
+ist es zeit zu schnupfen!`},
+  {t:`Lines`, v:`4 Lines auf dem Tisch,
+das macht üs wieder frisch. Priis`},
+  {t:`Triesenberger Schnupfen besser`, v:`Nach dem essen sollst du rauchen
+oder eine Frau missbrauchen.
+Hast du beides nicht zur Hand,
+nimm doch ein Loch und bums die Wand.
+Ist dir das zu primitiv,
+nimm doch besser einin Pris`},
+  {t:`Bryan Adams`, v:`schon bryan adams sagte
+Priis forgive me`},
+  {t:`Frau Rotz`, v:`I de Badwanne stoht dFrau Rotz
+und sWasser stoht ere bes zo de ... Chnüü`},
+  {t:`Samichlaus`, v:`samichlaus du alte penner!
+chauf d kondoms nid im denner.
+chaufs doch lieber im c und a
+det chasches sogar us wulle ha
+äs zwo drüü
+
+eins zwei oder drei letzte chance vorbei.
+ob ihr wirklich richtig steht seht ir wen das
+licht angeht.`},
+
+  {t:`Ferienstimmung`, v:`Er Wenn ich ein Vöglein wäre,
+dann flöge ich zu dir.
+Da ich kein Vöglein bin,
+vögle ich hier...
+Sie Da du kein Vöglein bist,
+sondern ein Wanderer.
+sorg dich nicht,
+mich vögelt ein anderer.`},
+  {t:`Migros budget`, v:`i dä migro gits dä riiiiis
+zum halbe Priiiiis!`},
+  {t:`bockä`, v:`Lieber uf chautem bodä hockä,
+aus mit chautä hodä bockä.`},
+  {t:`Mannä fu Göötannä`, v:`Mannä fu Göötannä
+Scheichä we Eichä
+und Haar a dä Scheichä
+we Velo Speichä
+Roschtig vun drabä seichä
+Arschbackä we VW tiirä
+und Ohrä we Chabisbletter.`},
+  {t:`Priiiis`, v:`Die Muschi hat 2 böhse Lappen
+und wollen nach dem Penis schnappen
+der Penis aber ist ein Wicht
+und sprrizt der Muschi ins Fesicht!`},
+  {t:`dawed`, v:`Dank an dich du edler Ritter,
+mit Frisur wie nach Gewitter,
+Mit Kampfeslust und Grossem Mut,
+die Weiber heftig Vögeln tut.
+Die Lanze hoch, der Helm verschlosse,
+wird das Sperma scharf geschossen.
+Nun hat er nichts vor dem Spiis.`},
+  {t:`Gott sprach`, v:`Gott sprach zu Cesar
+erhebt die Glesar
+Hanibal will über die Alpen tschalpen.
+Da sprach Moses zu Hanibal Mach doch keinen Mist
+wart bis der Tunnel fertig ist.`},
+  {t:`die sennse`, v:`ich wixte durch eine scheunesritze
+innen viel die sennse um
+und weg war die spitze!`},
+  {t:`Nach dem Essen`, v:`Nch dem Essen sollst du eine Rauchen,
+oder eine Frau gebrauchen,
+hast du beides nicht zur hand,
+bohr ein loch und Fick die Wand,
+kanst du beides nicht ergattern,
+lass die Handmaschiene rattern.`},
+  {t:`Tell der Eidgenosse`, v:`tell sprach zu den eigenossen,
+wer nicht schnupft der wird erschossen,
+da kahm gessler mit geschrei
+und verbot die schnupferei,
+da verpasste tell ihm einen schuss
+und da war schluss mit dem verband,
+jezt schnupft wider jedermann...`},
+  {t:`migro`, v:`migro-buget, denner coop,
+als so billig wies nur goht,
+nur a eim düe mir nid spaare,
+a üsem schnupf däm wunderbare!`},
+  {t:`Hasler`, v:`We zum Chilchäturm z spitzli,
+ghert zu Innertkirchä z rizli.
+We Hasler are the best,
+drum priiis uf iiis and fuck the rest`},
+  {t:`Aebi`, v:`En Buur ohni Aebi
+isch wiä en Bueb ohni Schnäb`},
+  {t:`Wenn der Hans`, v:`Wenn der Hans di Liesel fickt
+das ihm grad der schwanz abknickt
+da muss er gopfertami fluchen
+und im Futz die Eichel suchen.
+Hat er sie dann mal gefunden
+sind die Eier auch verschwunden.`},
+  {t:`naschen`, v:`has du schnupf in der taschen
+hast du immer was zum naschen`},
+  {t:`Vögel vögeln`, v:`Raupen raupen,
+Schlangen schlängeln,
+Vögel vögeln`},
+  {t:`Als Wolle noch teuer war`, v:`Früher als Wolle noch teuer war,
+trug man unterhosen aus Fotzenhaar.
+Trug man Unterhosen aus Fotzenhaar,
+stand das Rohr das ganze Jahr`},
+  {t:`Heidi und Peter`, v:`Heidi sagt zum Peter,
+steck ihn rein dein viertel Meter,
+doch Peter die arme Sau
+hatte einen Samenstau.
+da platzte Peter der Pimmel,
+jetzt vögelt er im Himmel!`},
+  {t:`oma`, v:`Wen es draussen stürmt und wetert
+die oma auf den opa klettert
+opa leidet grosse not
+oma fickt den opa tod
+oma kichert
+bin ja gut versichert.`},
+  {t:`Liebe`, v:`Die Liebe ischt ein Mischt
+wenn du alleine bischt...`},
+  {t:`Buure`, v:`Mer Buure sind starchi Manne
+starch wie Wättertanne
+sell nome eine röttle dra
+dem wird s'röttle scho verga
+vom Oste bes im Weste
+mer Buure sind die Beschte!`},
+  {t:`Die Bibel`, v:`Schnupftabak und Alkohol
+sind deine grössten Feinde Wohl!
+Doch in der Bibel steht
+geschrieben du sollst auch deine Feind lieben!`},
+  {t:`Seilziehen`, v:`Wir ziehen den Schnupf
+wir ziehn am Seil
+meine Güte sind wir geil`},
+  {t:`Sieg Delfhin`, v:`Auf der Scheisse ist einer am drücken
+zum schnupfen lasst uns zusammenrücken
+so hebt die Hand und sprecht nen Spruch
+sonst geht unsere Freundschaft zu bruch`},
+  {t:`Tell`, v:`Tell sprach zu den Eidgenossen,
+wer nicht schnupft der wird erschossen.
+da kam der Gessler mit geschrei,
+und verbiet die Schnupferei.
+Doch der Tell ganz im verdruss,
+verpasst dem Gessler einen Schuss,
+Da war schluss mit dem verbann,
+jetzt schnupfte wieder jeder Mann Prise!`},
+  {t:`briis isch immer guät he`, v:`tief vom wald da komm ich her
+schaut mein sack ist schwer
+ein jahhrlang hatt ich samenstau,
+doch jetzt wird gefögelt wie die sau priis`},
+  {t:`Grilln`, v:`Egal woher du kommst und was du willst
+Egal ob du mit kohle oder gas grillst,
+Egal ob eichhof oder Lagerbier,
+alles was so schön ist an dir lieben wir.
+Schweiz du geiles Land, ich zahle dir Pfand
+Mit Magnet und Mc Crysstals und einer Flasche
+Mascarty stossen wir an auf unsre Grillparty`},
+  {t:`Fescht`, v:`en schnupf ghört efach zo jedem Fescht,
+de chlepft di uf mosch nüd is nescht.
+chli tanze ond singä
+mit denä sachä dösch di ganz nacht dörrä bringe.
+ab ond zue nennsch denk au en schnupf!
+probiers, hesch bis am morge wacker pfuupf.
+i säge no,
+en schnupf ghört ih de link hand priis mitenand.`},
+  {t:`d'schiisi verstopft`, v:`d'schiisi verstopft im 1te stock
+d'schiisi verstopft im 2te stock
+d'schiisi verstopft im 3te stock
+d'schiisi verstopft im 4te stock
+d'schiisi verstopft im ganze huus schiise mer
+doch zum fänster uus`},
+  {t:`toggeburger`, v:`wieso legit d toggeburger fraue kenn bh a?
+wills denn meh hügelzone gitt.`},
+  {t:`Berner`, v:`Wir Berner sind die besten Stecher,
+und die Könige am Becher.
+wenn die Eichel, rot wie Wein,
+ja das muss ein Berner sein.
+wir können die Frauen so verwöhnen,
+das diese noch nach Stunden stöhnen.
+und ist ein Löchlein noch so klein,
+der Berner murkst ihn einfach rein.
+mit Gottvertroue und Vaseline,
+bringsch ne oh i Betong ine.`},
+  {t:`Walterswil`, v:`We will be, we will fuck,
+we have tabac in the sack,
+saas-fee brauner schnee,
+ja wir schnupfer sind ok!
+Es isch mer aues eis ding,
+ob ig schnupf oder sing,
+ha es näseli wi nes vögeli
+darum schnupfe ig so ring i mi gring!
+Und dann die hände zur nase und lasst uns
+schnupfer sein,
+wir kaufen den tabak niemals in der landi ein!
+Nämememer ne? Mir näne,
+mulan mini titte si grösser aus dini,
+priiiiiis, vögle priiiis, wes
+muess si, tonnewiiiiis!`},
+  {t:`schni schna schnupf`, v:`Schni, schna, schnupf
+dManne hend kei Pfupf,
+wie chönnts au andersch sii,
+sii hend üs au ned immer debii.
+ricker racker recker,
+de Lehrer isch en Fecker!
+ribel rabel rubel,
+und dezue en Dubel!
+Isch äbe geil, Ägeristyle!`},
+  {t:`Nebedsee`, v:`Suufe, rauche, schnupfe rund um dUhr,
+das isch Näbedseeler Bergkultur!`},
+  {t:`Verflucht heiss`, v:`wenn die füzze überhitzen
+und die schwänze darin schwitzen
+aus dem arsch tropft der schweiss
+ist es gopfetami heiss!`},
+  {t:`Fendt fahrer`, v:`suffä isch gsond
+kiffä macht chrank
+i bi schnupfer gottseidank
+so got dä schpruch ond nöd andersch`},
+  {t:`Komplizierte Liebe`, v:`Liebe ist komliziert,
+doch der Schnupf ist homogenisiert.
+Darum wollen wir uns bei unsrem Schnupf bedanken
+denn er vernebelt unsere Traurigen Gedanken!`},
+  {t:`Wär Schnupft`, v:`Wär Schnupft u pfupft
+u geili froue rupft,
+däm geiz nid mis`},
+  {t:`Duen nöd kiffe, sondern sniife!`, v:`Bier macht dick,
+Schnapps macht chrank,
+duen ä nöd kiffe,
+sondern sniife!`},
+  {t:`Der Snuff`, v:`Gott erschuf den Pfand,
+das hat doch aller Hand,
+Alkohol ist nicht zu brauchen,
+denn wir wollen auch nicht rauchen,
+wenn wir nicht mehr laufen können,
+könn'n wir uns was feines gönnen,
+wir wollen snuffen wie die Affen,
+auch wenn wir's nicht nach Hause schaffen!`},
+  {t:`Kamer Piis`, v:`Zwüschet Bängge und Richeburg liit s Paradies
+und zwae bim Kamer Piis`},
+  {t:`Rütlischwur`, v:`Vom Rütlischwur wird heut gesprochen,
+damit unsere Herzen pochen,
+wir sind edel wir sind rein,
+wir sind stolz Eidgenossen zu sein!`},
+
+  {t:`Chuck Norris`, v:`Wenn Chuck Norris mit einem Mann schläft,
+liegt das nicht daran das er schwul ist,
+sondern daran das ihm die Frauen ausgegangen sind.`},
+  {t:`Aebi`, v:`Gott Sprach zu den Korintern,
+wir brauchen einen Schneepflug für den Winter.`},
+  {t:`Die Grünen`, v:`Lieber ein Haus im Grünen
+als die Grünen im Haus!`},
+  {t:`De Baum`, v:`Mann steht im Wald und glaubt es kaum
+Rechts ein Baum und Links ein Baum
+in der Mitte man glaubt es kaum
+steht auch ein Baum`},
+  {t:`Tell`, v:`Als Tell musste den Apfel tupfen,
+wollte er erst noch einen mit uns schnupfen.
+Danach konnte er den Apfel nicht mehr so genau
+sehen,
+da musste der Walter halt aus dem Leben gehen!`},
+  {t:`In der nacht`, v:`In der Nacht. In der Nacht,
+wenn der Busenhalter kracht
+und der Schwanz explodiert,
+werden Kinder produziert`},
+  {t:`Für alle Antikiffer und Antifötzel`, v:`Kiffen tut nur Lumpenpack.
+Da nehmen wir lieber Schnupftabak.`},
+  {t:`z'läbe...`, v:`z'läbe isch wie e hüenerstange
+churz u verschisse`},
+  {t:`Schitterbige`, v:`Lieber schitter bigele
+aus dr pigger schibele`},
+  {t:`schnupfe`, v:`schnupfe ohni spruch,
+esch wie schisse ohni gruch!`},
+  {t:`Globi`, v:`schnupfä isch mis hobby
+wär nid schnupft isch ä globi`},
+  {t:`Mannä`, v:`Mannä händ Chleider, leider.
+Das isch fies, drum priis.`},
+  {t:`o herr`, v:`o herr im himmel las uns beten
+ich würd so gerne titen kneten
+muschis kraulen und besamen
+o herr im himmel ich dank dir amen.`},
+  {t:`magnet ich liebe dich`, v:`magnet ich liebe dich!
+du bist die einzige hoffnug für mich!
+ich zieh dich ein schon alles weg!
+eine preys das ist ein klecks!
+ein freestailer könnte nicht schaden!
+eine ganze beige auf meiner haut vergraben!
+ich habs geschnupf jetzt gehts mir gut!
+eine strasse das wäre gut!
+doch das ist zu viel für dich!
+darum nehm ich mir deine und gerade noch eine!
+heheh magnet eshc eh de feinscht ond de
+stärkscht schnupf!`},
+  {t:`Unser Motto`, v:`Geiler Sex und Sonnenschein,
+Kiffen und auf Drogen sein,
+wir bleiben unsrem Motto treu
+Geil, Bekifft und arbeitscheu.`},
+  {t:`s'Meitschi`, v:`Es hocket es Meitschi ufem Dütschi
+us strichled zärtlich a sim Fützi
+und dänkt debi mit frohem Muet
+ächli Bumse tät dem Fützi guet.`},
+  {t:`Frühling`, v:`wenn der bauer säht das korn
+und die frauen tropfen vorn,
+wenn die männer haben ständer,
+dann ist es frühling im kalender!`},
+  {t:`der furz`, v:`der furz erhebt das wohlbefinden,
+erfreut das herz,
+bläst den filzleusen die bläschen aus den haaren
+und stinkt,
+damit die schwerhörigen auch etwas davon haben.`},
+  {t:`Isi brisi`, v:`isi brisi brösi
+dä schnupf dä isch im dösli
+isi brisi präsi
+dä schnupf dä muass ins näsli!`},
+  {t:`Vogelchischtli`, v:`Lieber es Vogelchischtli nagle
+als e Nagelchische vogle...`},
+  {t:`Atila`, v:`Atila der Hunnenkönig
+fickte viel und kämpfte wenig,
+gestorben ist er nicht im Kampf
+sondern an einem Hodenkrampf!`},
+  {t:`Frau`, v:`in der dusche steht frau rutz
+hinterm vorhang sieht man ihren...
+Kopf`},
+  {t:`Grindelwald`, v:`Süüfe, schnupfe rund um dühr
+das ischt Grindelwalder Bärgkultüür!
+Brüüni Nasa, rota Grind
+Schnupf ischt nid fir chlinni Chind!`},
+  {t:`Mer sind Schwiiizer`, v:`Schweizer Schnupfer das sind wir,
+darum schnupfen wir gleich hier!`},
+  {t:`Toggeburger`, v:`Toggeburger Wiiber sind die geilschte
+und weisch werum sie schnupfed am meischte!`},
+  {t:`Pumukel`, v:`Pumukel sprach zu meister eder,
+schnupfen tut doch einfach jeder,
+darum hebe deine Prise auch,
+denn schön ist des schnupfens brauch!`},
+  {t:`Schnupf`, v:`Winnetou kam um die Ecke,
+schnupfte und verreckte.`}
+];
+
+const grid    = document.getElementById('grid');
+const pager   = document.getElementById('pager');
+const countEl = document.getElementById('count');
+const search  = document.getElementById('search');
+const clearBtn= document.getElementById('clear');
+
+let filtered = sprueche.slice();
+let page = 1;
+let query = '';
+
+function escapeHtml(s){
+  return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+function escapeReg(s){return s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');}
+
+function highlight(text){
+  const safe = escapeHtml(text);
+  if(!query) return safe;
+  const re = new RegExp('('+escapeReg(query)+')','gi');
+  return safe.replace(re,'<mark>$1</mark>');
+}
+
+function applyFilter(){
+  query = search.value.trim();
+  const q = query.toLowerCase();
+  filtered = q
+    ? sprueche.filter(s => s.t.toLowerCase().includes(q) || s.v.toLowerCase().includes(q))
+    : sprueche.slice();
+  page = 1;
+  clearBtn.style.display = query ? 'block' : 'none';
+  render();
+}
+
+function render(){
+  const total = filtered.length;
+  const pages = Math.max(1, Math.ceil(total / PER_PAGE));
+  if(page > pages) page = pages;
+  const start = (page-1)*PER_PAGE;
+  const slice = filtered.slice(start, start+PER_PAGE);
+
+  // count text
+  if(query){
+    countEl.innerHTML = `<b>${total}</b> Treffer für "${escapeHtml(query)}"`;
+  }else{
+    countEl.innerHTML = `<b>${sprueche.length}</b> Sprüch insgesamt`;
+  }
+
+  // cards
+  if(total === 0){
+    grid.innerHTML = `<div class="empty">🤷 Kei Spruch gfunde. Probier öppis anders.</div>`;
+    pager.innerHTML = '';
+    return;
+  }
+  grid.innerHTML = slice.map(s =>
+    `<article class="card">
+       <h2>${highlight(s.t)}</h2>
+       <div class="verse">${highlight(s.v)}</div>
+     </article>`
+  ).join('');
+
+  renderPager(pages);
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function renderPager(pages){
+  if(pages <= 1){ pager.innerHTML = ''; return; }
+  let html = '';
+  html += `<button ${page===1?'disabled':''} data-p="${page-1}">‹ Zrugg</button>`;
+
+  const nums = [];
+  const add = n => { if(!nums.includes(n) && n>=1 && n<=pages) nums.push(n); };
+  add(1); add(2);
+  add(page-1); add(page); add(page+1);
+  add(pages-1); add(pages);
+  nums.sort((a,b)=>a-b);
+
+  let prev = 0;
+  for(const n of nums){
+    if(n - prev > 1) html += `<span class="dots">…</span>`;
+    html += `<button class="${n===page?'active':''}" data-p="${n}">${n}</button>`;
+    prev = n;
+  }
+  html += `<button ${page===pages?'disabled':''} data-p="${page+1}">Wiiter ›</button>`;
+  pager.innerHTML = html;
+
+  pager.querySelectorAll('button[data-p]').forEach(b=>{
+    b.addEventListener('click',()=>{
+      page = parseInt(b.dataset.p,10);
+      render();
+    });
+  });
+}
+
+search.addEventListener('input', applyFilter);
+clearBtn.addEventListener('click', ()=>{ search.value=''; applyFilter(); search.focus(); });
+
+render();
+</script>
+</body>
+</html>
