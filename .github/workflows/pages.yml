@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - claude/learning-method-website-de-0p0rq8
   workflow_dispatch:
 
 permissions:
