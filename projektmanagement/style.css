@@ -94,6 +94,42 @@ td.num{width:64px;text-align:center;font-weight:700;color:var(--accent);}
   margin-bottom:10px;font-family:Georgia,serif;
 }
 
+/* Lerneinheiten (Module) */
+.unit{
+  background:var(--paper);border:1px solid var(--line);border-radius:10px;
+  margin:0 0 26px;box-shadow:0 1px 3px rgba(20,25,35,.04);overflow:hidden;
+}
+.unit-head{
+  background:linear-gradient(135deg,#26313f,#1a222d);color:#f4f1ea;
+  padding:20px 30px;display:flex;flex-wrap:wrap;align-items:baseline;gap:12px;
+}
+.unit-head .le-badge{
+  background:var(--accent);color:#fff;border-radius:6px;
+  padding:3px 12px;font-size:13px;font-weight:700;letter-spacing:.08em;
+  text-transform:uppercase;white-space:nowrap;
+}
+.unit-head h3{
+  margin:0;color:#fdfbf7;font-size:22px;border:none;flex:1 1 320px;
+}
+.unit-head .le-meta{color:#b9c2cd;font-size:14px;white-space:nowrap;}
+.unit-body{padding:22px 30px 26px;}
+.unit-body p.unit-desc{margin-top:0;color:var(--muted);}
+.unit-body table{margin:14px 0 6px;}
+.kap{width:84px;text-align:center;font-weight:700;color:var(--accent);white-space:nowrap;}
+.unit-extra{
+  display:flex;flex-wrap:wrap;gap:10px 26px;margin-top:14px;
+  padding-top:14px;border-top:1px dashed var(--line);font-size:15px;
+}
+.unit-extra .label{
+  font-weight:700;color:var(--accent);text-transform:uppercase;
+  font-size:12.5px;letter-spacing:.06em;display:block;margin-bottom:2px;
+}
+.unit-extra > div{flex:1 1 260px;}
+.phase-badge{
+  display:inline-block;background:#eef3ee;color:#2e5d3a;border:1px solid #cfdccf;
+  border-radius:999px;padding:1px 11px;font-size:13px;font-weight:700;
+}
+
 /* Hinweise & Abzeichen */
 .note{
   background:var(--accent-soft);border-left:5px solid var(--accent);
